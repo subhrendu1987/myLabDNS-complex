@@ -14,9 +14,19 @@ Edit the config/Corefile as follows:
 
 Once you're done, simply type the following command to run the container in daemon mode (requires docker-compose):
 
+- Ubuntu: Disable and stop the systemd-resolved service
+```
+sudo systemctl disable systemd-resolved.service # To disable resolvd permanently
+sudo systemctl stop systemd-resolved
+sudo service network-manager restart
+```
+
+- Start DNS container
 ```plain
 docker-compose up -d
 ```
+- Stop DNS container 
+`docker-compose kill; docker-compose rm`
 
 Prefer to simply run docker from the command line? Example shows call for latest image. 
 
