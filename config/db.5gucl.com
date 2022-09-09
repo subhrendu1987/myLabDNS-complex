@@ -1,4 +1,4 @@
-$ORIGIN example.com.
+$ORIGIN 5gucl.com.
 @	3600 IN	SOA sns.dns.icann.org. noc.dns.icann.org. (
 				2018070500 ; serial
 				7200       ; refresh in seconds (2 hours is 7200)
@@ -10,7 +10,7 @@ $ORIGIN example.com.
 	3600 IN NS a.iana-servers.net.
 	3600 IN NS b.iana-servers.net.
 
-gateway    IN A     192.168.1.1
+gateway    IN A     192.168.2.1
 
 
 ; NOTES:
