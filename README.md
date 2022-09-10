@@ -105,9 +105,36 @@ example.com.		3600	IN	NS	b.iana-servers.net.
 ;; MSG SIZE  rcvd: 169
 ```
 ## With nslookup
-nslookup -debug  gw.5gucl.com
+```
+nslookup -debug  gw.5gucl.com 127.0.0.1
+```
+Desired output is as follows
+```
+Server:		127.0.0.1
+Address:	127.0.0.1#53
+
+------------
+    QUESTIONS:
+	gw.5gucl.com, type = A, class = IN
+    ANSWERS:
+    ->  gw.5gucl.com
+	internet address = 192.168.138.1
+	ttl = 60
+    AUTHORITY RECORDS:
+    ->  5gucl.com
+	nameserver = 86cce8a2a932.
+	ttl = 60
+    ADDITIONAL RECORDS:
+------------
+Name:	gw.5gucl.com
+Address: 192.168.138.1
+```
+
+****
+# Final Configuration
+## Add the host system IP as the primary DNS server and check with `nslookup -debug  gw.5gucl.com` and if it is successful then test with browser.
 -----
-## Learn more
+# Learn more
 
 - [Corefile explained](https://coredns.io/2017/07/23/corefile-explained/)
 - [Quickstart Guide](https://coredns.io/2017/07/24/quick-start/)
