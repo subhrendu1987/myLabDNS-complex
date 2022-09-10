@@ -1,10 +1,5 @@
-$ttl 38400
-5gucl.com.	IN	SOA	86cce8a2a932. subhrendu\.subho.gmail.com. (
-			1662775022
-			10800
-			3600
-			604800
-			38400 )
-5gucl.com.	60	IN	NS	86cce8a2a932.
-www.5gucl.com.	60	IN	A	192.168.2.1
-gateway.5gucl.com.	60	IN	A	192.168.138.1
+# Hosts file for Domain: example.com
+# Place entries below in standard hosts file format: ipaddress hostname fqdn
+192.168.2.1	5gucl.com
+192.168.2.1	www.5gucl.com
+192.168.138.1	gateway.5gucl.com

@@ -1,14 +1,14 @@
-version: '3.1'
+version: '2'
 services:
-    coredns:
-        build: .
-        container_name: coredns
+    bind:
+        image: sameersbn/bind:9.9.5-20170129
+        container_name: bind
         restart: on-failure # other option: always - if you want persistent through host reboots
-        expose:
-            - '53'
-            - '53/udp'
         ports:
             - '53:53'
             - '53:53/udp'
+            - '10000:10000/tcp'
         volumes:
-            - './config:/etc/coredns'
+            - './bind:/data'
+        stdin_open: true 
+        tty: true
