@@ -1,3 +1,36 @@
+
+# Bind
+## [Full Instructions] (https://linoxide.com/setting-dns-server-docker)
+-----
+## Instructions
+## Configurations
+- Build DNS
+```
+sudo docker pull sameersbn/bind:9.9.5-20170129
+```
+OR
+```
+sudo docker-compose -f docker-compose.bind.yaml up -d
+```
+- Start DNS
+```
+sudo docker run --name bind -d --restart=always \
+	 --publish 53:53/tcp --publish 53:53/udp --publish 10000:10000/tcp \
+	 --volume bind:/data \
+	  sameersbn/bind:9.9.5-20170129
+```
+OR
+```
+sudo docker-compose -f docker-compose.bind.yaml up -d
+```
+- Login to DNS using [web interface] (https://localhost:10000) with default username:`root` and password: `password` add zone and addresses by following instructions given below. 
+	-  Create master zone (e.g. `5gucl.com`) with following specifications `{Zone Type:Forward,Domain Name:[5gucl.com], Email address:<use own email>,<Keep rest of settings as default>}`
+	- Start from Bind Home page: Select Zone name in `Existing DNS Zones`. Select `Address` button and add new address with following specifications. `{Name:[gw.5gucl.com],Address:<IP of the target>,Time-to-live:60s}` and apply changes using `Apply Zone` button. Add one address entry for the Domain name (e.g. `5gucl.com`), and rest as per your requirement.
+	- Start from Bind Home page: Add `forwading and transfer` to google DNS `8.8.8.8` and `8.8.4.4`
+	- `Apply configurations` after each change 
+
+********
+# CoreDNS
 ## Full instructions can be found in 
 [burkeazbill/docker-coredns/](https://github.com/burkeazbill/docker-coredns/)
 ----
@@ -18,11 +51,11 @@ sudo service network-manager restart
 ```
 - Start DNS container
 ```
-sudo docker-compose up -d
+sudo docker-compose -f docker-compose.coredns.yaml up -d
 ```
 - Force build and start after changing the configurations
 ```
-sudo docker-compose up --build --force-recreate --no-deps -d
+sudo docker-compose -f docker-compose.coredns.yaml up --build --force-recreate --no-deps -d
 ```
 
 - (OR) Use simply run docker from the command line? Example shows call for latest image. 
@@ -32,16 +65,16 @@ docker run -m 128m --expose=53 --expose=53/udp -p 53:53 -p 53:53/udp -v "$PWD"/c
 
 - Stop DNS container 
 ```
-sudo docker-compose kill; sudo docker-compose rm -f; sudo docker ps -a
+sudo docker-compose -f docker-compose.coredns.yaml kill; sudo docker-compose -f docker-compose.coredns.yaml rm -f; sudo docker ps -a
 ```
-----
-## Test the DNS
-You can confirm the dns is working with dig as follows, from the host running the container. Assuming you simply run the command line above without any modifications, you can use this:
+****
+# Test the DNS
+## With dig
 ```
 dig @localhost gateway.5gucl.com
 ```
 
-This should result in the output including an ANSWER SECTION that shows gateway.5gucl.com resolves to 192.168.1.1 as follows:
+This should result in the output including an ANSWER SECTION that shows gateway.5gucl.com resolves to 192.168.138.1 as follows:
 
 ```
 $ dig @localhost gateway.example.com
@@ -71,6 +104,8 @@ example.com.		3600	IN	NS	b.iana-servers.net.
 ;; WHEN: Thu Jul 05 23:24:04 EDT 2018
 ;; MSG SIZE  rcvd: 169
 ```
+## With nslookup
+nslookup -debug  gw.5gucl.com
 -----
 ## Learn more
 
