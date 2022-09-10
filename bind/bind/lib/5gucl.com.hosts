@@ -1,0 +1,9 @@
+$ttl 3600
+5gucl.com.	IN	SOA	fb5451d3db73. subhrendu\.subho.gmail.com. (
+			2022091001
+			3600
+			600
+			1209600
+			3600 )
+5gucl.com.	IN	NS	fb5451d3db73.
+gw.5gucl.com.	1M	IN	A	192.168.2.1

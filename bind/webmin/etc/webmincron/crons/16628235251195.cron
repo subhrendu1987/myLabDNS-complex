@@ -1,0 +1,5 @@
+id=16628235251195
+func=scheduled_collect_system_info
+module=system-status
+arg0=boot
+boot=1

@@ -1,0 +1,56 @@
+FROM jrei/systemd-ubuntu:20.04 AS add-apt-repositories
+#FROM ubuntu:focal-20200423 AS add-apt-repositories
+
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y gnupg \
+ && apt-key adv --fetch-keys http://www.webmin.com/jcameron-key.asc \
+ && echo "deb http://download.webmin.com/download/repository sarge contrib" >> /etc/apt/sources.list
+RUN ls -al /etc/apt/trusted.gpg
+
+FROM jrei/systemd-ubuntu:20.04
+#FROM ubuntu:focal-20200423
+
+LABEL maintainer="subhrendu.subho@gmail.com"
+
+ENV BIND_USER=bind \
+    BIND_VERSION=9.16.1 \
+    WEBMIN_VERSION=1.941 \
+#    WEBMIN_VERSION=2.000 \
+    DATA_DIR=/data \
+    PUBKEY="D97A3AE911F63C51"
+
+COPY --from=add-apt-repositories /etc/apt/trusted.gpg /etc/apt/trusted.gpg
+COPY --from=add-apt-repositories /etc/apt/sources.list /etc/apt/sources.list
+
+RUN rm -rf /etc/apt/apt.conf.d/docker-gzip-indexes
+RUN apt-get update
+RUN apt install -y bind9=1:${BIND_VERSION}*
+RUN apt install -y bind9-host=1:${BIND_VERSION}* 
+RUN apt install -y dnsutils
+RUN apt update; apt install -y software-properties-common
+RUN apt install -y perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python unzip shared-mime-info
+RUN apt install -y wget curl gpg
+# RUN wget http://prdownloads.sourceforge.net/webadmin/webmin_2.000_all.deb
+#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ${PUBKEY}
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ${PUBKEY}
+RUN gpg --keyserver pgpkeys.mit.edu --recv-key ${PUBKEY}
+RUN gpg -a --export ${PUBKEY} | apt-key add -
+RUN apt update
+#RUN dpkg --install webmin_2.000_all.deb
+RUN add-apt-repository "deb [arch=amd64] http://download.webmin.com/download/repository sarge contrib"
+RUN apt install -y webmin=${WEBMIN_VERSION}
+RUN apt install -y runit-systemd
+RUN rm -rf /var/lib/apt/lists/*
+RUN cp /data/entrypoint-bind.sh /sbin/entrypoint.sh
+
+#COPY entrypoint-bind.sh /sbin/entrypoint.sh
+#COPY test_service-bind.sh /usr/bin/test_service.sh
+#RUN chmod +x /usr/bin/test_service.sh
+
+RUN chmod 755 /sbin/entrypoint.sh
+
+EXPOSE 53/udp 53/tcp 10000/tcp
+
+ENTRYPOINT ["/sbin/entrypoint.sh"]
+
+CMD ["/usr/sbin/named"]
